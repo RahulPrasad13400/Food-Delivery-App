@@ -2,6 +2,7 @@ import { Router } from "express";
 import { UserController } from "../controllers/UserController";
 import { body, validationResult } from 'express-validator'
 import { UserValidators } from "../validators/UserValidators";
+import { GlobalMiddleWare } from "../middlewares/GlobalMiddleWare";
 
 class UserRouter{
 
@@ -16,7 +17,8 @@ class UserRouter{
         this.deleteRoutes()
     }
 
-    getRoutes(){        
+    getRoutes(){ 
+               
         // this.router.get('/login',(req, res)=>{
         //     const data = [{ name : 'abc'}]
         //     res.status(200).send(data)
@@ -44,6 +46,12 @@ class UserRouter{
 
         // this.router.get('/test', UserController.test1, UserController.test2)
 
+        this.router.get('/send/verification/email', UserValidators.verifyUserForResendEmail(), UserController.resendVerificationEmail)
+
+    }
+
+    postRoutes(){
+
         this.router.post('/signup',
         //   [
         //     body('name', 'Name is required').isString(),
@@ -54,18 +62,14 @@ class UserRouter{
         //         else throw new Error('Email is not available for validation')
         //     })
         //   ]
-          UserValidators.signup(), UserController.signup)   // USERVALIDATORS.SIGNUP FUNCTION IS CALLED IMMEDIATELY
+          UserValidators.signup(), GlobalMiddleWare.checkError, UserController.signup)   // USERVALIDATORS.SIGNUP FUNCTION IS CALLED IMMEDIATELY
         //  UserValidators.signup() -- CALLING A FUNCTION
         //  UserController.signup   -- PASSING A FUNCTION
-        
-    }
-
-    postRoutes(){
 
     }
 
     patchRoutes(){
-
+        this.router.patch('/verify', UserValidators.verifyUserEmail(), GlobalMiddleWare.checkError, UserController.verify)
     }
 
     putRoutes(){

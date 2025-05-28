@@ -1,6 +1,8 @@
 import * as bodyParser from 'body-parser'
 import * as express from 'express'
 import * as mongoose from 'mongoose' 
+import * as cors from 'cors'
+
 import { getEnvironmentVariables } from './environments/environment'
 import UserRouter from './routers/UserRouter'
 
@@ -18,6 +20,7 @@ export class Server{
     setConfigs(){
         this.connectMongoDB()
         this.configureBodyParser()
+        this.allowCors()
     }
 
     connectMongoDB(){
@@ -29,6 +32,10 @@ export class Server{
 
     configureBodyParser(){
         this.app.use(bodyParser.urlencoded({extended : true})) // EXTENDED IS SET TO TRUE, SO WE CAN PASS ANY TYPE OF DATA
+    }
+
+    allowCors(){
+        this.app.use(cors())
     }
 
     setRoutes(){
